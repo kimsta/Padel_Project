@@ -1,6 +1,6 @@
 # Padel Performance Analysis & Match Prediction
 
-![R](https://img.shields.io/badge/R-276DC3?style=for-the-badge&logo=r&logoColor=white)
+![R](https://img-shields.io/badge/R-276DC3?style=for-the-badge&logo=r&logoColor=white)
 ![Shiny](https://img.shields.io/badge/Shiny-1A1A1A?style=for-the-badge&logo=shiny&logoColor=white)
 
 This repository contains the complete analysis for a personal data science project aimed at evaluating player performance in the sport of padel. The project serves as a case study in applying a rigorous statistical workflow to a sparse, real-world dataset.
@@ -30,32 +30,30 @@ A custom R script (`01_data_wrangling.R`) parses raw, text-based scores. It appl
 
 ### 2. Frequentist Analysis
 This approach uses traditional hypothesis testing to evaluate player skill against a 50% baseline.
-* **Maximum Likelihood Estimates (MLE)**: Player win percentages are calculated at the match, set, game, and tiebreak levels.
-* **Hypothesis Testing**: A one-proportion z-test (`prop.test`) determines if a player's win rate is statistically greater than 50% (α = 0.05).
-* **Power Analysis**: A post-hoc power analysis evaluates the sensitivity of the tests, quantifying the probability of detecting a meaningful effect.
+* **Maximum Likelihood Estimates (MLE)**: Player win percentages are calculated.
+* **Hypothesis Testing**: A one-proportion z-test determines if a player's win rate is statistically greater than 50% (α = 0.05).
+* **Power Analysis**: A post-hoc power analysis evaluates the sensitivity of the tests.
 
-![Power Curve Plot](power_curve.png)
+![Power Curve Plot](plots/power_curve.png)
 
 ### 3. Bayesian Analysis
-This approach provides a more nuanced view of uncertainty.
-* **Beta-Binomial Model**: A Beta(2, 2) prior is updated with each player's data to produce a posterior probability distribution of their true skill.
+This approach provides a more nuanced view of uncertainty using a Beta-Binomial model.
 * **Quantifying Certainty**: The analysis yields direct probabilities (e.g., "There is a 99.4% probability that Kim's true game-win rate is > 50%").
 
-![Bayesian Skill Distributions](bayesian_skill_distributions_faceted.png)
+![Bayesian Game-Level Skill Distributions](plots/bayesian_game_plot.png)
 
 ## 🛠 Tech Stack
 
 * **Language**: R
-* **Core Packages**: Tidyverse, ggplot2, pwr
+* **Core Packages**: Tidyverse, ggplot2, pwr, here
 * **Reporting**: R Markdown, knitr
 
 ## 📁 Repository Structure
 
 ```
 ├── scripts/               # All silent R scripts for the analysis pipeline
-│   ├── 01_data_wrangling.R
-│   ├── ... (and all other analysis scripts)
 ├── data/                  # Raw and cleaned data files
+├── plots/                 # Saved plots and visualizations
 ├── analysis_report.Rmd    # The R Markdown file to generate the report
 ├── analysis_report.html   # The final, self-contained HTML report
 └── README.md              # This file
@@ -75,4 +73,4 @@ Planned features include:
 1.  Clone this repository.
 2.  Open the `.Rproj` file in RStudio.
 3.  Install the required packages (e.g., `here`, `knitr`, `pwr`, `ggplot2`, `tidyr`).
-4.  Open `analysis_report.Rmd` and click the "Knit" button to reproduce the full report.
+4.  Open `analysis_report.Rmd` and click the "Knit" button to reproduce the full report and generate the plots.
