@@ -1,0 +1,23 @@
+"YYYY.MM","Team1P1","Team1P2","Team2P1","Team2P2","Match_Winner","Team1_Sets_Won","Team2_Sets_Won","Team1_Meaningful_Games_Won","Team2_Meaningful_Games_Won","Team1_Total_Games_Won","Team2_Total_Games_Won","Team1_Tiebreaks_Won","Team2_Tiebreaks_Won"
+"2025-03","Kim","Jone","Jon","Antti","Team1",2,0,13,6,19,8,1,0
+"2025-03","Kim","Jone","Jon","Antti","Team1",2,0,12,1,37,9,0,0
+"2025-03","Kim","Jone","Jon","Antti","Team2",1,2,13,14,13,14,0,0
+"2025-03","Kim","Jone","Jon","Antti","Team1",2,0,12,2,12,2,0,0
+"2025-03","Kim","Jone","Hastis","Antti","Team1",1,0,7,5,7,5,0,0
+"2025-03","Kim","Hastis","Jone","Antti","Team1",1,0,6,4,6,4,0,0
+"2025-03","Kim","Antti","Jone","Hastis","Draw",0,0,3,3,3,3,0,0
+"2025-03","Kim","Jone","Antti","Tomi","Team1",2,1,17,14,17,14,1,0
+"2025-04","Kim","Jone","Antti","Anttu","Team2",0,2,10,14,10,14,0,0
+"2025-05","Kim","Antti","Jon","Tomi","Team2",1,2,12,16,12,16,0,0
+"2025-05","Kim","Jone","Anttu","Jussi","Team2",1,2,15,18,15,18,1,0
+"2025-05","Jone","Jon","Anttu","Antun veli","Team2",0,2,8,12,8,12,0,0
+"2025-05","Jone","Kim","Jon","Antti","Team1",2,1,17,14,17,14,0,0
+"2025-05","Jone","Kim","Anttu","Tomi","Team2",0,2,6,12,6,12,0,0
+"2025-06","Jon","Kim","Antti","Jone","Team1",2,0,12,4,12,4,0,0
+"2025-06","Jon","Kim","Antti","Anttu","Team1",2,1,15,16,15,16,1,0
+"2025-06","Jon","Kim","Antti","Jone","Team2",1,2,12,16,12,16,0,0
+"2025-07","Jon","Kim","Antti","Jone","Team1",2,1,13,15,13,15,1,0
+"2025-07","Jon","Kim","Antti","Jone","Team1",2,0,12,6,12,6,0,0
+"2025-07","Jon","Kim","Antti","Jone","Team1",3,0,18,12,18,12,0,0
+"2025-08","Jon","Tomi","Anttu","Jussi","Team2",1,2,13,12,13,12,0,0
+"2025-08","Jon","Tomi","Jone","Anttu","Draw",1,1,13,12,13,12,0,1
