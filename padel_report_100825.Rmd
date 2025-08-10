@@ -1,0 +1,189 @@
+---
+title: "Padel Performance Analysis: A Statistical Case Study"
+author: "KS"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: united
+---
+
+```{r setup, include=FALSE}
+# This chunk runs all analysis scripts silently to create the R objects.
+library(knitr)
+source("scripts/01_data_wrangling.R")
+source("scripts/02_player_statistics.R")
+source("scripts/03_statistical_inference.R")
+source("scripts/04_power_analysis.R")
+source("scripts/05_power_curve.R")
+source("scripts/05b_power_curve_future.R")
+source("scripts/07_bayesian_analysis_full.R")
+```
+
+## Introduction: The Analytical Framework
+
+### Objective
+This project analyzes a real-world, ongoing dataset of padel match results to move beyond simple win/loss records and develop a robust player performance evaluation. The analysis is structured as a formal case study, demonstrating a complete data science workflow from data wrangling to statistical inference and interpretation.
+
+### Core Assumptions
+The fundamental assumption of this analysis is that match, set, game, and tiebreak outcomes can be modeled as a **Binomial process**. Each event is treated as an independent Bernoulli trial where a player either wins or does not. This allows us to estimate a player's underlying, unobserved skill parameter ($p$), representing their true probability of winning any given event.
+
+### Dual-Approach Analysis
+To provide a comprehensive picture, this report employs two major statistical paradigms:
+1.  **Frequentist Analysis**: To provide objective, long-run probabilities and answer "yes/no" questions about statistical significance.
+2.  **Bayesian Analysis**: To quantify our certainty and provide a more intuitive understanding of player skill, especially given the limited data.
+
+---
+
+## 1. Descriptive Statistics: Player Leaderboard
+
+The first step is to estimate each player's skill from the observed data. We calculate the **Maximum Likelihood Estimate (MLE)** of the true win probability ($p$) for each player at all four levels. This is the observed proportion of wins, and the results are summarized in the leaderboard below, ranked by Game Win Percentage.
+
+> **Metric Definitions:**
+> * All "Played" counts include every valid match, including those that ended in a draw.
+> * `Match_Win_Pct` is calculated using a points system where a win is 1 point and a draw is 0.5 points.
+> * All other win percentages are the simple proportion of wins to total events played.
+
+```{r show-leaderboard, echo=FALSE}
+kable(leaderboard, caption = "Overall Player Performance Summary (MLEs)")
+```
+
+---
+
+## 2. Inferential Analysis: Frequentist Approach
+
+Next, we use hypothesis testing to determine if a player's performance is statistically significant. For this test of win proportion, we focus on **decisive outcomes** (wins and losses).
+
+* **Null Hypothesis (H0):** The player's true win probability is 50% or less (p <= 0.5).
+* **Alternative Hypothesis (Ha):** The player's true win probability is greater than 50% (p > 0.5).
+* **Significance Level:** We use a standard $\alpha = 0.05$.
+
+```{r show-hyp-tests, echo=FALSE, results='asis'}
+# This chunk generates the four stand-alone hypothesis test tables.
+levels <- c("Game", "Set", "Match", "Tiebreak")
+for (lvl in levels) {
+  hyp_table <- subset(final_results_df, Level == lvl)
+  hyp_table <- hyp_table[order(hyp_table$P_Value), ]
+  rownames(hyp_table) <- NULL
+  hyp_table <- hyp_table[, c("Player", "Wins", "Played", "P_Value", "CI_Lower", "CI_Upper", "Significant")]
+  cat(paste0("### ", lvl, "-Level Analysis\n"))
+  print(kable(hyp_table, digits=3, col.names = c("Player", "Wins", "Decisive Played (n)", "P-Value", "95% CI Lower", "95% CI Upper", "Significant"), 
+              caption = paste(lvl, "Level Hypothesis Test Results (H0: p <= 0.5)")))
+  cat("\n\n")
+}
+```
+
+
+A key observation from these tables is that **very few results are statistically significant**—only a handful of tests showed a p-value below our 0.05 threshold. This is not surprising and highlights a central theme of this analysis: detecting a small winning edge requires a substantial amount of evidence. As our subsequent power analysis will confirm, many of our tests were not sensitive enough to confidently distinguish a real, small skill difference from random chance.
+
+---
+
+## 3. Post-Hoc Power Analysis
+
+A hypothesis test can fail to find a significant result simply because it lacks statistical power. This analysis evaluates the sensitivity of our tests. We define a **"meaningfully skilled player"** as someone with a true win rate of 55%. The table below shows the probability (power) of our test correctly identifying such a player, given our current sample sizes.
+
+```{r show-power-table, echo=FALSE}
+kable(power_table_wide, 
+      digits = 2, 
+      col.names = c("Player", "N (Match)", "Power", "N (Set)", "Power", "N (Game)", "Power", "N (Tiebreak)", "Power"),
+      caption = "Statistical Power to Detect a 55% Win Rate (against H0: p <= 0.5)")
+```
+The results confirm that our analysis is most reliable at the game-level due to its higher power.
+
+---
+
+## 4. Power Curve Visualization
+
+The following plots visualize the relationship between statistical power, effect size, and sample size.
+
+```{r show-power-curve, echo=FALSE}
+power_curve
+```
+
+The curve above shows that with our current best sample size (n=450), our test becomes highly sensitive (power > 80%) when a player's true win rate approaches 58%.
+
+```{r show-power-curve-future, echo=FALSE}
+power_curve_future
+```
+
+This second curve simulates a future scenario with more data (n=600), showing that the test would become powerful enough to reliably detect even smaller winning edges (~56%).
+
+---
+
+## 5. Bayesian Analysis: Quantifying Uncertainty
+
+As a complementary approach, we use Bayesian inference. This method is ideal for quantifying our certainty given the limited data. We use a **Beta-Binomial model** with a weakly informative prior (`Beta(2, 2)`), which assumes a player is likely average before we see their results.
+
+### Bayesian Probability Summary
+The table below shows the direct probability that each player's true skill is greater than 50% (`P(p > 0.5)`). This provides a more intuitive measure of evidence than a p-value.
+
+```{r show-bayes-table, echo=FALSE}
+kable(bayesian_summary_table, 
+      digits = 3,
+      caption = "Bayesian Probability of Player Skill Being Above Average (p > 50%)")
+```
+
+### Player Skill Distributions
+Finally, we visualize the full posterior distributions. Wider curves indicate more uncertainty, while narrower curves indicate more certainty. These plots provide the most complete picture of our findings.
+
+```{r show-bayes-plots, echo=FALSE, results='asis'}
+cat("#### Game-Level Distributions\n")
+print(bayesian_plot_game)
+cat("\n\n#### Set-Level Distributions\n")
+print(bayesian_plot_set)
+cat("\n\n#### Match-Level Distributions\n")
+print(bayesian_plot_match)
+cat("\n\n#### Tiebreak-Level Distributions\n")
+print(bayesian_plot_tiebreak)
+```
+
+## 6. Conclusion of Statistical Analysis
+
+This report serves as a mid-term summary of the project, with the central theme being the critical role of sample size in statistical certainty. This explains our key frequentist finding: **despite several players having winning records, very few of these results were found to be statistically significant.**
+
+The dual-analysis approach provided a comprehensive picture. While the frequentist tests gave us objective "yes/no" answers on significance, the Bayesian analysis offered a more nuanced view of uncertainty. The Bayesian posterior plots provided the clearest visualization of our conclusions:
+
+* A player like **Hastis**, with very little data, has a wide, flat skill distribution that is almost identical to our initial prior belief—we have learned very little about his true skill.
+* In contrast, a player like **Kim**, with over 450 games, has a much narrower, "peaky" distribution, representing our high degree of certainty that he is a winning player.
+
+This pattern holds across all levels of analysis, confirming that the most reliable insights are derived from the game-level data where our sample size is largest.
+
+> **A Note on the Test Statistic**
+>
+> The frequentist analysis used a **one-proportion z-test**. The z-statistic is an intuitive measure of evidence: it counts how many standard errors our observed result (e.g., a 56% win rate) is away from the null hypothesis (a 50% win rate). A large z-score indicates that the result is far enough from 50% that it is unlikely to be due to random chance, leading to a significant p-value.
+
+## 7. Future Work: Predictive Modeling & Interactive Application
+
+This report constitutes the complete exploratory and inferential analysis phase of the project. The final phase will focus on predictive modeling and productization by developing an R Shiny web application.
+
+The planned features for the application include:
+
+* **Match Outcome Prediction**: A predictive model (e.g., a Bradley-Terry model) will be trained on the data to estimate player skill ratings. The app will use these ratings to generate win probabilities for any given matchup.
+* **Interactive Player Dashboard**: The app will also feature a dashboard where users can select a specific player to view their detailed statistical profile and personalized visualizations, such as performance over time or with different partners.
+
+```{r save-final-plots, include=FALSE}
+# This final, hidden chunk saves the plots we want to use in our README.md
+
+# Create a 'plots' directory if it doesn't exist
+if (!dir.exists("plots")) {
+  dir.create("plots")s
+}
+
+# Save the power curve
+ggsave(
+  filename = "power_curve.png", 
+  plot = power_curve, 
+  path = "plots", 
+  width = 8, height = 6, dpi = 300, bg = "white"
+)
+
+# Save the Bayesian game-level plot
+ggsave(
+  filename = "bayesian_game_plot.png",
+  plot = bayesian_plot_game,
+  path = "plots",
+  width = 8, height = 6, dpi = 300, bg = "white"
+)
+```
+
