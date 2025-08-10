@@ -23,7 +23,7 @@ The analysis is presented in two parallel paradigms:
 
 ## 📊 Methodology
 
-The full analysis is detailed in the **[Statistical Report (`analysis_report.html`)](analysis_report.html)**. The workflow is as follows:
+The full analysis is detailed in the **[Statistical Report (`analysis_report.html`)](padel_report_100825.html)**. The workflow is as follows:
 
 ### 1. Data Wrangling
 A custom R script (`01_data_wrangling.R`) parses raw, text-based scores. It applies specific game logic to handle best-of-N sets, draws, and tiebreaks, outputting a clean, structured dataset.
