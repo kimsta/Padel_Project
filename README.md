@@ -1,7 +1,7 @@
 # Padel Performance Analysis & Match Prediction
 
 ![R](https://img-shields.io/badge/R-276DC3?style=for-the-badge&logo=r&logoColor=white)
-![Shiny](https://img.shields.io/badge/Shiny-1A1A1A?style=for-the-badge&logo=shiny&logoColor=white)
+![Shiny](https://img-shields.io/badge/Shiny-1A1A1A?style=for-the-badge&logo=shiny&logoColor=white)
 
 This repository contains the complete analysis for a personal data science project aimed at evaluating player performance in the sport of padel. The project serves as a case study in applying a rigorous statistical workflow to a sparse, real-world dataset.
 
@@ -9,7 +9,7 @@ This repository contains the complete analysis for a personal data science proje
 
 ## Project Overview
 
-Motivated by friendly post-match debates, this project seeks to answer the question: "Who is actually the best player?" The analysis moves beyond simple win percentages to provide a statistically robust evaluation of player skill. It tackles the common real-world challenge of drawing confident conclusions from limited and messy data.
+Motivated by friendly post-match debates about lucky wins and unlucky losses, this project seeks to answer a more fundamental question: **"How much of a role does luck play in amateur padel?"** The analysis uses statistical inference to distinguish consistent, repeatable skill from random chance, tackling the common real-world challenge of drawing confident conclusions from limited data.
 
 The analysis is presented in two parallel paradigms:
 1.  **Frequentist Analysis**: To provide objective "yes/no" answers about statistical significance.
@@ -17,9 +17,9 @@ The analysis is presented in two parallel paradigms:
 
 ## 🔑 Key Findings (TL;DR)
 
-* **Only two players show statistically significant winning performance.** At the Set and Game levels, the results for players Kim and Anttu are strong enough to confidently rule out random chance.
-* **Game-level analysis is the most reliable metric.** Due to its large sample size, it has the highest statistical power. Conclusions from match- or set-level data should be treated with caution.
-* **Power analysis confirms the need for more data.** To reliably detect a small winning edge (e.g., a 55% win rate), the analysis shows that over 600 games are needed, explaining why most players did not achieve statistical significance.
+* **Luck plays a major role in match outcomes.** Most player records are not statistically distinguishable from a 50/50 coin flip. Only two players in the dataset showed a performance strong enough to be confidently attributed to skill over random chance.
+* **A large amount of data is required to separate skill from luck.** The analysis is most reliable at the game-level, where the sample size is largest. Conclusions from match- or set-level data should be treated with extreme caution.
+* **Power analysis confirms this difficulty.** To reliably detect even a small but consistent winning edge (a 55% win rate), the analysis shows that over 600 games of data are needed.
 
 ## 📊 Methodology
 
