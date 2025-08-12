@@ -53,8 +53,8 @@ hypothesisTesterServer <- function(id, data) {
   moduleServer(id, function(input, output, session) {
     
     # This reactive expression is the core of the module's logic.
-    # It automatically re-runs whenever any of its dependent inputs (e.g.,
-    # the selected player or alpha level) are changed by the user.
+    # It automatically re-runs whenever any of its dependent inputs
+    # are changed by the user.
     reactive_test_results <- reactive({
       
       player_name <- input$selected_player
@@ -88,24 +88,41 @@ hypothesisTesterServer <- function(id, data) {
                           alternative = "greater", correct = FALSE, 
                           conf.level = 1 - alpha)
         
-        is_significant <- test$p.value < alpha
+        # --- Plain English Summary Logic ---
+        win_pct <- (counts$wins / counts$played) * 100
         conf_level_pct <- (1 - alpha) * 100
-        ci_label <- paste0("\n", conf_level_pct, "% Confidence Interval:")
-        conclusion_text <- ifelse(is_significant, 
-                                  paste0("Reject H0. The result IS statistically significant at the α = ", alpha, " level."),
-                                  paste0("Fail to reject H0. The result IS NOT statistically significant at the α = ", alpha, " level."))
         
-        # Assemble the final, formatted text string to be displayed
-        paste("Player:", player_name,
-              "\nLevel:", level,
-              "\n------------------------------------",
-              "\nData:", counts$wins, "wins in", counts$played, "decisive events",
-              "\nNull Hypothesis (H0): True win rate p <=", null_p,
-              "\nSignificance Level (α):", alpha,
-              "\n------------------------------------",
-              "\nCalculated P-Value:", round(test$p.value, 4),
-              ci_label, paste0("[", round(test$conf.int[1], 3), ", ", round(test$conf.int[2], 3), "]"),
-              "\n\nConclusion:", conclusion_text)
+        evidence_strength <- ifelse(test$p.value < 0.01, "VERY STRONG",
+                                    ifelse(test$p.value < 0.05, "STRONG",
+                                           ifelse(test$p.value < 0.10, "MODERATE", "WEAK or NONE")))
+        
+        plain_english_conclusion <- switch(evidence_strength,
+                                           "VERY STRONG" = paste0("Based on the data, we have very strong evidence to conclude that ", player_name, "'s true win rate is likely greater than ", null_p * 100, "%."),
+                                           "STRONG" = paste0("Based on the data, we have strong evidence to conclude that ", player_name, "'s true win rate is greater than ", null_p * 100, "%."),
+                                           "MODERATE" = paste0("Based on the data, there is moderate evidence suggesting ", player_name, "'s true win rate might be greater than ", null_p * 100, "%, but more data is needed to be confident."),
+                                           "WEAK or NONE" = paste0("Based on the data, we do not have enough evidence to conclude that ", player_name, "'s true win rate is greater than ", null_p * 100, "%. Their record is not statistically distinguishable from the null hypothesis.")
+        )
+        
+        ci_interpretation <- paste0("Furthermore, we are ", conf_level_pct, "% confident that their true win rate is at least ", round(test$conf.int[1] * 100, 1), "%.")
+        
+        # --- Assemble the final output string ---
+        paste(
+          "------------------------------------\n",
+          "PLAIN ENGLISH CONCLUSION\n",
+          "------------------------------------\n",
+          "Question: Is", player_name, "'s observed win rate (", round(win_pct, 1), "%) statistically greater than ", null_p * 100, "%?\n\n",
+          "Strength of Evidence:", evidence_strength, "\n\n",
+          "Conclusion:", plain_english_conclusion, "\n\n",
+          "Skill Estimate:", ci_interpretation, "\n\n",
+          "------------------------------------\n",
+          "TECHNICAL DETAILS\n",
+          "------------------------------------\n",
+          "Data:", counts$wins, "wins in", counts$played, "decisive events (", round(win_pct, 1), "%)\n",
+          "Hypothesis Test: One-sided prop.test, H0: p <=", null_p, "\n",
+          "P-Value:", round(test$p.value, 4), "\n",
+          conf_level_pct, "% CI: [", round(test$conf.int[1], 3), ", ", round(test$conf.int[2], 3), "]"
+        )
+        
       } else {
         paste("No data available for", player_name, "at the", level, "level.")
       }
