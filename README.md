@@ -59,15 +59,20 @@ This approach provides a more nuanced view of uncertainty using a Beta-Binomial 
 └── README.md              # This file
 ```
 
-## 🚀 Future Work
+## 🚀 Live Demo & Future Work
 
-This report concludes the full statistical analysis phase of the project. The final phase will focus on predictive modeling and deploying the results as an interactive R Shiny application.
+A key component of this project is a live, interactive R Shiny application that allows users to explore the statistical analysis.
 
-Planned features include:
-* **Match Outcome Prediction**: A predictive model will be trained to generate win probabilities for any given matchup.
-* **Interactive Player Dashboard**: Users will be able to select a player and view their detailed statistical profile and performance visualizations.
-* **Live Demo Link**: [➡️ Live Padel Odds Calculator (Coming Soon)]
+**[➡️ Use the Live Padel Stats Explorer Here](https://kimst.shinyapps.io/Padel_Stats_Explorer/)**
 
+The currently deployed version of the app includes the **Interactive Hypothesis Tester**, a tool that allows you to:
+* Select any player and level of analysis (Game, Set, etc.).
+* Dynamically adjust the null hypothesis and significance level (α).
+* See how the p-value, confidence interval, and statistical conclusion change in real-time.
+
+Future updates to the app will include the other tabs we've planned:
+* **Interactive Player Dashboard**: A multi-select tool for comparing player descriptive statistics.
+* **Match Outcome Prediction**: A predictive model to generate win probabilities for any given matchup.
 ## ⚙️ How to Run Locally
 
 1.  Clone this repository.
